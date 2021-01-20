@@ -4,3 +4,5 @@ venv
 .tox
 coverage.xml
 *.egg-info/
+build/
+dist/
