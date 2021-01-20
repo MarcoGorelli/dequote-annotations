@@ -1,5 +1,7 @@
 from typing import List, cast
 
+MYGLOBAL = cast('str', 'a')
+
 def func(a: None, b: str) -> List[str, str]:
     def funcfunc(a: str):
         def funcfuncfunc(a: str):
