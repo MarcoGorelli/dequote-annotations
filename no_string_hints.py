@@ -83,6 +83,8 @@ def process_body(
             process_function(statement, to_replace)
         elif isinstance(statement, ast.ClassDef):
             process_class(statement, to_replace)
+        elif isinstance(statement, ast.AnnAssign):
+            process_annotation(statement.annotation, to_replace)
 
 
 def no_string_types(file: str) -> None:

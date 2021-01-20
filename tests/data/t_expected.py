@@ -3,7 +3,7 @@ from typing import List
 def func(a: None, b: str) -> List[str, str]:
     def funcfunc(a: str):
         def funcfuncfunc(a: str):
-            pass
+            r: str
 
 class Cat:
 
