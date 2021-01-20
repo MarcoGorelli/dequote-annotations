@@ -57,7 +57,7 @@ def process_function(
     for i in getattr(func.args, 'posonlyargs', []):
         process_annotation(i.annotation, to_replace)
     process_annotation(func.returns, to_replace)
-    process_body(func.body, to_replace)
+    process_body(func.body, to_replace, skip_assign=False)
 
 
 def process_class(
@@ -71,12 +71,14 @@ def process_class(
             process_function(statement, to_replace)
         elif isinstance(statement, ast.ClassDef):
             process_class(statement, to_replace)
-    process_body(class_.body, to_replace)
+    process_body(class_.body, to_replace, skip_assign=False)
 
 
 def process_body(
         body: Sequence[ast.stmt],
         to_replace: MutableMapping[Offset, str],
+        *,
+        skip_assign: bool,
 ) -> None:
     for statement in body:
         if isinstance(statement, ast.FunctionDef):
@@ -85,7 +87,7 @@ def process_body(
             process_class(statement, to_replace)
         elif isinstance(statement, ast.AnnAssign):
             process_annotation(statement.annotation, to_replace)
-        elif isinstance(statement, ast.Assign):
+        elif not skip_assign and isinstance(statement, ast.Assign):
             value = statement.value
             if isinstance(value, ast.Call):
                 func = value.func
@@ -100,7 +102,7 @@ def no_string_types(file: str) -> None:
         content = fd.read()
     tree = ast.parse(content)
 
-    process_body(tree.body, to_replace)
+    process_body(tree.body, to_replace, skip_assign=True)
     tokens = src_to_tokens(content)
 
     for n, i in reversed_enumerate(tokens):
