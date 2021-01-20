@@ -18,7 +18,7 @@ Sample `.pre-commit-config.yaml`:
 
 ```yaml
 -   repo: https://github.com/MarcoGorelli/no-string-hints
-    rev: v0.1.2
+    rev: v0.1.3
     hooks:
     -   id: no-string-hints
 ```
