@@ -90,7 +90,7 @@ def process_body(
 def no_string_types(file: str) -> None:
     to_replace: MutableMapping[Offset, str] = {}
 
-    with open(file) as fd:
+    with open(file, encoding='utf-8') as fd:
         content = fd.read()
     tree = ast.parse(content)
 
@@ -101,7 +101,7 @@ def no_string_types(file: str) -> None:
         if i.offset in to_replace:
             tokens[n] = i._replace(src=to_replace[i.offset])
 
-    with open(file, 'w') as fd:
+    with open(file, 'w', encoding='utf-8') as fd:
         fd.write(tokens_to_src(tokens))
 
 
