@@ -12,6 +12,7 @@ class Cat:
 
     def func2(b: str, c: str):
         def func2func(d: int):
+            d = d
             d = cast(int, d)
 
     class Bat:
