@@ -1,5 +1,6 @@
 import argparse
 import ast
+from typing import cast
 from typing import MutableMapping
 from typing import Optional
 from typing import Sequence
@@ -85,6 +86,11 @@ def process_body(
             process_class(statement, to_replace)
         elif isinstance(statement, ast.AnnAssign):
             process_annotation(statement.annotation, to_replace)
+        elif isinstance(statement, ast.Assign):
+            value = cast(ast.Call, statement.value)
+            func = cast(ast.Name, value.func)
+            if func.id == 'cast':
+                process_annotation(value.args[0], to_replace)
 
 
 def no_string_types(file: str) -> None:

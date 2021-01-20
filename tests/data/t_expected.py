@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, cast
 
 def func(a: None, b: str) -> List[str, str]:
     def funcfunc(a: str):
@@ -12,7 +12,7 @@ class Cat:
 
     def func2(b: str, c: str):
         def func2func(d: int):
-            pass
+            d = cast(int, d)
 
     class Bat:
         e: int
