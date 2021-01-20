@@ -1,4 +1,4 @@
-from typing import List, cast
+from typing import List, cast, Callable
 
 MYGLOBAL = cast('str', 'a')
 
@@ -19,3 +19,7 @@ class Cat:
 
     class Bat:
         e: int
+
+
+def callable_func(a: Callable[[str], str]):
+    ...

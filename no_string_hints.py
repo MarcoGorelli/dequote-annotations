@@ -12,8 +12,8 @@ from tokenize_rt import tokens_to_src
 
 
 def process_annotation(
-        annotation: Optional[Union[ast.expr, ast.slice]],
-        to_replace: MutableMapping[Offset, str],
+    annotation: Optional[Union[ast.expr, ast.slice]],
+    to_replace: MutableMapping[Offset, str],
 ) -> None:
     if isinstance(annotation, ast.Constant):
         if isinstance(annotation.value, str):
@@ -35,7 +35,7 @@ def process_annotation(
         return
     if isinstance(annotation, (ast.Name, ast.NameConstant)):
         return
-    if isinstance(annotation, ast.Tuple):
+    if isinstance(annotation, (ast.Tuple, ast.List)):
         for i in annotation.elts:
             process_annotation(i, to_replace)
         return
@@ -47,8 +47,8 @@ def process_annotation(
 
 
 def process_function(
-        func: ast.FunctionDef,
-        to_replace: MutableMapping[Offset, str],
+    func: ast.FunctionDef,
+    to_replace: MutableMapping[Offset, str],
 ) -> None:
     for i in func.args.args:
         process_annotation(i.annotation, to_replace)
@@ -61,8 +61,8 @@ def process_function(
 
 
 def process_class(
-        class_: ast.ClassDef,
-        to_replace: MutableMapping[Offset, str],
+    class_: ast.ClassDef,
+    to_replace: MutableMapping[Offset, str],
 ) -> None:
     for statement in class_.body:
         if isinstance(statement, ast.AnnAssign):
@@ -75,8 +75,8 @@ def process_class(
 
 
 def process_body(
-        body: Sequence[ast.stmt],
-        to_replace: MutableMapping[Offset, str],
+    body: Sequence[ast.stmt],
+    to_replace: MutableMapping[Offset, str],
 ) -> None:
     for statement in body:
         if isinstance(statement, ast.FunctionDef):
