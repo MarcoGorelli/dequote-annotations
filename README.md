@@ -1,6 +1,6 @@
 [![Build Status](https://github.com/MarcoGorelli/no-string-hints/workflows/tox/badge.svg)](https://github.com/MarcoGorelli/no-string-hints/actions?workflow=tox)
-[![Coverage](https://codecov.io/gh/MarcoGorelli/no-string-hints/branch/master/graph/badge.svg)](https://codecov.io/gh/MarcoGorelli/no-string-hints)
-[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/MarcoGorelli/no-string-hints/master.svg)](https://results.pre-commit.ci/latest/github/MarcoGorelli/no-string-hints/master)
+[![Coverage](https://codecov.io/gh/MarcoGorelli/no-string-hints/branch/main/graph/badge.svg)](https://codecov.io/gh/MarcoGorelli/no-string-hints)
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/MarcoGorelli/no-string-hints/main.svg)](https://results.pre-commit.ci/latest/github/MarcoGorelli/no-string-hints/main)
 
 no-string-hints
 ================
