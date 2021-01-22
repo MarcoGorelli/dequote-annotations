@@ -41,3 +41,19 @@ def test_posonly_kwonly(tmpdir):
         expected = fd.read()
 
     assert result == expected
+
+
+def test_main_no_change(tmpdir):
+    test_file = os.path.join('tests', 'data', 't_no_change.py')
+    tmp_test_file = os.path.join(tmpdir, 't.py')
+    shutil.copy(test_file, tmp_test_file)
+
+    main((tmp_test_file,))
+
+    with open(tmp_test_file) as fd:
+        result = fd.read()
+
+    with open(os.path.join('tests', 'data', 't_no_change.py')) as fd:
+        expected = fd.read()
+
+    assert result == expected

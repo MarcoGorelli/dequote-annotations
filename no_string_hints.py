@@ -97,6 +97,8 @@ def no_string_types(file: str) -> None:
     process_body(tree.body, to_replace)
     tokens = src_to_tokens(content)
 
+    if not to_replace:
+        return
     for n, i in reversed_enumerate(tokens):
         if i.offset in to_replace:
             tokens[n] = i._replace(src=to_replace[i.offset])
