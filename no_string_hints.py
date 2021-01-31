@@ -42,7 +42,9 @@ def process_annotation(
     if isinstance(annotation, ast.Index):
         return process_annotation(annotation.value, to_replace)
     if isinstance(annotation, ast.Subscript):
-        return process_annotation(annotation.slice, to_replace)
+        if isinstance(annotation.value, ast.Name):
+            if annotation.value.id != 'Literal':
+                return process_annotation(annotation.slice, to_replace)
     return
 
 
