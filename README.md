@@ -23,6 +23,16 @@ Sample `.pre-commit-config.yaml`:
     -   id: no-string-hints
 ```
 
+## Command-line example
+
+```console
+$ cat myfile.py
+myvar: 'str'
+$ no_string_hints myfile.py
+$ cat myfile.py
+myvar: str
+```
+
 ## See also
 
 Check out [pyupgrade](https://github.com/asottile/pyupgrade), which I learned a lot from when writing this.
