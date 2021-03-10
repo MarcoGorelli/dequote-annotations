@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import List
 
 def func(z, /, a: None, *, b: str) -> List[str, 'str']:
