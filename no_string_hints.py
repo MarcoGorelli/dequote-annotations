@@ -11,102 +11,73 @@ from tokenize_rt import src_to_tokens
 from tokenize_rt import tokens_to_src
 
 
-def process_annotation(
-    annotation: Optional[Union[ast.expr, ast.slice]],
-    to_replace: MutableMapping[Offset, str],
-) -> None:
-    if isinstance(annotation, ast.Constant):
-        if isinstance(annotation.value, str):
-            to_replace[
+class Visitor(ast.NodeVisitor):
+    def __init__(self) -> None:
+        self.to_replace: MutableMapping[Offset, str] = {}
+
+    def replace_string_literal(
+        self,
+        annotation: Optional[Union[ast.expr, ast.slice]],
+    ) -> None:
+        if isinstance(annotation, ast.Constant):
+            if isinstance(annotation.value, str):
+                self.to_replace[
+                    Offset(
+                        annotation.lineno,
+                        annotation.col_offset,
+                    )
+                ] = annotation.value
+            return
+        elif isinstance(annotation, ast.Str):  # pragma: nocover_py38
+            # Only for Python 3.6, Python 3.7
+            self.to_replace[
                 Offset(
                     annotation.lineno,
                     annotation.col_offset,
                 )
-            ] = annotation.value
-        return
-    if isinstance(annotation, ast.Str):  # pragma: nocover_py38
-        # Only for Python 3.6, Python 3.7
-        to_replace[
-            Offset(
-                annotation.lineno,
-                annotation.col_offset,
-            )
-        ] = annotation.s
-        return
-    if isinstance(annotation, (ast.Name, ast.NameConstant)):
-        return
-    if isinstance(annotation, (ast.Tuple, ast.List)):
-        for i in annotation.elts:
-            process_annotation(i, to_replace)
-        return
-    if isinstance(annotation, ast.Index):
-        return process_annotation(annotation.value, to_replace)
-    if isinstance(annotation, ast.Subscript):
-        if isinstance(annotation.value, ast.Name):
-            if annotation.value.id != 'Literal':
-                return process_annotation(annotation.slice, to_replace)
-    return
+            ] = annotation.s
+            return
+        elif isinstance(annotation, (ast.Tuple, ast.List)):
+            for i in annotation.elts:
+                self.replace_string_literal(i)
+        elif isinstance(annotation, ast.Index):
+            self.replace_string_literal(annotation.value)
+        elif isinstance(annotation, ast.Subscript):
+            if isinstance(annotation.value, ast.Name):
+                if annotation.value.id != 'Literal':
+                    self.replace_string_literal(annotation.slice)
+
+    def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
+        for i in node.args.args:
+            self.replace_string_literal(i.annotation)
+        for i in node.args.kwonlyargs:
+            self.replace_string_literal(i.annotation)
+        for i in getattr(node.args, 'posonlyargs', []):
+            self.replace_string_literal(i.annotation)
+        self.replace_string_literal(node.returns)
+        super().generic_visit(node)
+
+    def visit_AnnAssign(self, node: ast.AnnAssign) -> None:
+        self.replace_string_literal(node.annotation)
+        super().generic_visit(node)
 
 
-def process_function(
-    func: ast.FunctionDef,
-    to_replace: MutableMapping[Offset, str],
-) -> None:
-    for i in func.args.args:
-        process_annotation(i.annotation, to_replace)
-    for i in func.args.kwonlyargs:
-        process_annotation(i.annotation, to_replace)
-    for i in getattr(func.args, 'posonlyargs', []):
-        process_annotation(i.annotation, to_replace)
-    process_annotation(func.returns, to_replace)
-    process_body(func.body, to_replace)
-
-
-def process_class(
-    class_: ast.ClassDef,
-    to_replace: MutableMapping[Offset, str],
-) -> None:
-    for statement in class_.body:
-        if isinstance(statement, ast.AnnAssign):
-            process_annotation(statement.annotation, to_replace)
-        elif isinstance(statement, ast.FunctionDef):
-            process_function(statement, to_replace)
-        elif isinstance(statement, ast.ClassDef):
-            process_class(statement, to_replace)
-    process_body(class_.body, to_replace)
-
-
-def process_body(
-    body: Sequence[ast.stmt],
-    to_replace: MutableMapping[Offset, str],
-) -> None:
-    for statement in body:
-        if isinstance(statement, ast.FunctionDef):
-            process_function(statement, to_replace)
-        elif isinstance(statement, ast.ClassDef):
-            process_class(statement, to_replace)
-        elif isinstance(statement, ast.AnnAssign):
-            process_annotation(statement.annotation, to_replace)
-
-
-def no_string_types(file: str) -> None:
-    to_replace: MutableMapping[Offset, str] = {}
-
-    with open(file, encoding='utf-8') as fd:
-        content = fd.read()
+def no_string_types(content: str) -> Optional[str]:
     tree = ast.parse(content)
 
-    process_body(tree.body, to_replace)
+    visitor = Visitor()
+    visitor.visit(tree)
+
+    if not visitor.to_replace:
+        # nothing to replace.
+        return content
+
     tokens = src_to_tokens(content)
-
-    if not to_replace:
-        return
     for n, i in reversed_enumerate(tokens):
-        if i.offset in to_replace:
-            tokens[n] = i._replace(src=to_replace[i.offset])
+        if i.offset in visitor.to_replace:
+            tokens[n] = i._replace(src=visitor.to_replace[i.offset])
 
-    with open(file, 'w', encoding='utf-8') as fd:
-        fd.write(tokens_to_src(tokens))
+    return tokens_to_src(tokens)
 
 
 def main(argv: Optional[Sequence[str]] = None) -> None:
@@ -115,7 +86,12 @@ def main(argv: Optional[Sequence[str]] = None) -> None:
     args = parser.parse_args(argv)
 
     for i in args.files:
-        no_string_types(i)
+        with open(i, encoding='utf-8') as fd:
+            content = fd.read()
+        new_content = no_string_types(content)
+        if new_content is not None:
+            with open(i, 'w', encoding='utf-8') as fd:
+                fd.write(new_content)
 
 
 if __name__ == '__main__':  # pragma: nocover
