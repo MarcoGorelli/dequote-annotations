@@ -5,7 +5,7 @@
 no-string-hints
 ================
 
-A pre-commit hook to automatically remove string literals as type hints from argument, return, and class variable type annotations. It assumes that you have a Python3.7+ codebase and that your files contain `from __future__ import annotations`.
+A pre-commit hook to automatically remove string literals as type hints from argument, return, and class variable type annotations. Will only make the replacement if your file contains `from __future__ import annotations`.
 
 ## Installation
 

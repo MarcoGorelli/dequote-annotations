@@ -14,6 +14,7 @@ from tokenize_rt import tokens_to_src
 class Visitor(ast.NodeVisitor):
     def __init__(self) -> None:
         self.to_replace: MutableMapping[Offset, str] = {}
+        self.has_future_annotations: bool = False
 
     def replace_string_literal(
         self,
@@ -61,6 +62,14 @@ class Visitor(ast.NodeVisitor):
         self.replace_string_literal(node.annotation)
         super().generic_visit(node)
 
+    def visit_ImportFrom(self, node: ast.ImportFrom) -> None:
+        if (
+            node.module == '__future__'
+            and 'annotations' in {i.name for i in node.names}
+        ):
+            self.has_future_annotations = True
+        super().generic_visit(node)
+
 
 def no_string_types(content: str) -> Optional[str]:
     tree = ast.parse(content)
@@ -68,7 +77,7 @@ def no_string_types(content: str) -> Optional[str]:
     visitor = Visitor()
     visitor.visit(tree)
 
-    if not visitor.to_replace:
+    if not visitor.to_replace or not visitor.has_future_annotations:
         # nothing to replace.
         return content
 

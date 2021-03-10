@@ -73,3 +73,19 @@ def test_literal(tmpdir):
         expected = fd.read()
 
     assert result == expected
+
+
+def test_no_future_annotations(tmpdir):
+    test_file = os.path.join('tests', 'data', 'no_future_annotations.py')
+    tmp_test_file = os.path.join(tmpdir, 't.py')
+    shutil.copy(test_file, tmp_test_file)
+
+    main((tmp_test_file,))
+
+    with open(tmp_test_file) as fd:
+        result = fd.read()
+
+    with open(os.path.join('tests', 'data', 'no_future_annotations.py')) as fd:
+        expected = fd.read()
+
+    assert result == expected
