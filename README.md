@@ -1,15 +1,15 @@
-[![Build Status](https://github.com/MarcoGorelli/no-string-hints/workflows/tox/badge.svg)](https://github.com/MarcoGorelli/no-string-hints/actions?workflow=tox)
-[![Coverage](https://codecov.io/gh/MarcoGorelli/no-string-hints/branch/main/graph/badge.svg)](https://codecov.io/gh/MarcoGorelli/no-string-hints)
-[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/MarcoGorelli/no-string-hints/main.svg)](https://results.pre-commit.ci/latest/github/MarcoGorelli/no-string-hints/main)
+[![Build Status](https://github.com/MarcoGorelli/dequote-annotations/workflows/tox/badge.svg)](https://github.com/MarcoGorelli/dequote-annotations/actions?workflow=tox)
+[![Coverage](https://codecov.io/gh/MarcoGorelli/dequote-annotations/branch/main/graph/badge.svg)](https://codecov.io/gh/MarcoGorelli/dequote-annotations)
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/MarcoGorelli/dequote-annotations/main.svg)](https://results.pre-commit.ci/latest/github/MarcoGorelli/dequote-annotations/main)
 
-no-string-hints
+dequote-annotations
 ================
 
 A pre-commit hook to automatically remove string literals as type hints from argument, return, and class variable type annotations. Will only make the replacement if your file contains `from __future__ import annotations`.
 
 ## Installation
 
-`pip install no-string-hints`
+`pip install dequote-annotations`
 ## As a pre-commit hook
 
 See [pre-commit](https://github.com/pre-commit/pre-commit) for instructions
@@ -17,10 +17,10 @@ See [pre-commit](https://github.com/pre-commit/pre-commit) for instructions
 Sample `.pre-commit-config.yaml`:
 
 ```yaml
--   repo: https://github.com/MarcoGorelli/no-string-hints
-    rev: v0.2.0
+-   repo: https://github.com/MarcoGorelli/dequote-annotations
+    rev: v0.2.1
     hooks:
-    -   id: no-string-hints
+    -   id: dequote-annotations
 ```
 
 ## Command-line example
@@ -28,7 +28,7 @@ Sample `.pre-commit-config.yaml`:
 ```console
 $ cat myfile.py
 myvar: 'str'
-$ no_string_hints myfile.py
+$ dequote_annotations myfile.py
 $ cat myfile.py
 myvar: str
 ```
