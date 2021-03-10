@@ -9,7 +9,7 @@ A pre-commit hook to automatically remove string literals as type hints from arg
 
 ## Installation
 
-`pip install no_string_hints`
+`pip install no-string-hints`
 ## As a pre-commit hook
 
 See [pre-commit](https://github.com/pre-commit/pre-commit) for instructions
