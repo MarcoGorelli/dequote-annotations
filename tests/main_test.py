@@ -4,7 +4,7 @@ import sys
 
 import pytest
 
-from no_string_hints import main
+from dequote_annotations import main
 
 
 def test_main(tmpdir):
