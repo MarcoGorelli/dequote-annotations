@@ -18,7 +18,7 @@ Sample `.pre-commit-config.yaml`:
 
 ```yaml
 -   repo: https://github.com/MarcoGorelli/dequote-annotations
-    rev: v0.2.2
+    rev: v0.2.3
     hooks:
     -   id: dequote-annotations
 ```
