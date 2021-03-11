@@ -18,7 +18,7 @@ Sample `.pre-commit-config.yaml`:
 
 ```yaml
 -   repo: https://github.com/MarcoGorelli/dequote-annotations
-    rev: v0.2.1
+    rev: v0.2.2
     hooks:
     -   id: dequote-annotations
 ```
@@ -28,7 +28,7 @@ Sample `.pre-commit-config.yaml`:
 ```console
 $ cat myfile.py
 myvar: 'str'
-$ dequote_annotations myfile.py
+$ dequote-annotations myfile.py
 $ cat myfile.py
 myvar: str
 ```
